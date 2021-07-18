@@ -1,0 +1,6 @@
+The UFunK-Pad Sketch comes with Calibration-Data gathered on my exemplar of the Waveshare 2.8inch Touch LCD Shield.
+Your device might need other settings. 
+If you experience poor or wrong recognition of touch-events, you should calibrate your device.
+
+To get Touchscreen Calibration Data,
+run 
