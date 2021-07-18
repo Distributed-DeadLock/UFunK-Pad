@@ -3,4 +3,19 @@ Your device might need other settings.
 If you experience poor or wrong recognition of touch-events, you should calibrate your device.
 
 To get Touchscreen Calibration Data,
-run 
+upload the "UFunK-Calibration.ino"-Sketch
+and do the 4-step calibration process with a Stylus or similar.
+Repeat the calibration process until you get a reported Precision below 20 (both for X-Prec and Y-Prec).
+
+Then use the Values for X-Factor, Y-Factor, X-Offset & Y-Offset to edit the "UFunK-Pad.ino"-Sketch.
+
+Update these lines on the top of the Sketch with your new values:
+
+// configure touchscreen conversion factor and offset
+// use the data gathered from the touchscreen calibration sketch
+// conversion factor:
+#define TSC_X_FACTOR 11
+#define TSC_Y_FACTOR 14.5
+// offset:
+#define TSC_X_OFFSET 177
+#define TSC_Y_OFFSET 200
