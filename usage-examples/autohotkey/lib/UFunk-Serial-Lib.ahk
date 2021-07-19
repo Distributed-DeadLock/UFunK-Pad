@@ -10,6 +10,92 @@
 ;
 ;
 ; Functions:
+;
+;	UFunK_Autodetect_UFunK_Pad()
+;	Checks all availiable COM-Ports to find the UFunK-Pad
+;		Returns a Handle to the first found UFunK-Pad
+;
+;	UFunK_Button_Text(Handle, Button, Text)
+;	Set Text-Label of a Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Text   = Text-Label for the Button (max. 10 chars)
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_Color(Handle, Button, RGB888)
+;	Set background Color of a Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_TextColor(Handle, Button, RGB888)
+;	Set text Color of a Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_BorderColor(Handle, Button, RGB888)
+;	Set border Color of a Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_Pushed_Color(Handle, Button, RGB888)
+;	Set background Color of a Pushed-Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_Pushed_TextColor(Handle, Button, RGB888)
+;	Set text Color of a Pushed-Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_Pushed_BorderColor(Handle, Button, RGB888)
+;	Set border Color of a Pushed-Button
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_Button_ReDraw(Handle, Button)
+;	Redraw the Button with the new (text & color) properties
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Button = Number of the Button 13 - 24
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_InfoLine_Text(Handle, Line, Text)
+;	Set Text of a Info-Line
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Line = Number of the Info-Line 1 or 2
+;	Text   = Text-Label for the Button (max. 17 chars)
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0" when there was an error)
+;
+;	UFunK_InfoLine_Color(Handle, Line, RGB888)
+;	Set Color of a Info-Line
+;	Handle = a File-Handle for the COM-Port (gotten from UFunK_COM_Init() or UFunK_Autodetect_UFunK_Pad())
+;	Line = Number of the Info-Line 1 or 2
+;	Color = a number (in HEX or DEC) representing a RGB888-color
+;	Returns a String with the response to the sent command 
+;			(usually "OK". "ERROR : ..." or "0 when there was an error)
+;
+;
+;
 ;	UFunK_COM_Init(Port, HaltOnError := 0)
 ;	Set up a COM-Port to use with the other UFunK-COM..-functions
 ;		Port 	= a String containing the COM-Port Name (e.g. COM1 or COM12)
@@ -46,16 +132,111 @@
 ; 	get list of all COM-Ports in an array
 ;		Returns an Array with the COM-Port Names (e.g. COM1 or COM12) registered on the Computer
 ;
-;	UFunK_Autodetect_UFunK_Pad()
-;	Checks all availiable COM-Ports to find the UFunK-Pad
-;		Returns a Handle to the first found UFunK-Pad
-;
 ;	UFunK_RGB_888to565(rgb888)
 ;	convert a RGB888-color (e.g. 0xFFFFFF or 16777215) to a RGB565-color in decimal (e.g. 65535)
 ;		rgb888	= a number (in HEX or DEC) representing a RGB888-color
 ;		Returns a number in DEC representing the nearest RGB565-color
 ;
 
+; UFunK_Autodetect_UFunK_Pad	- Begin
+UFunK_Autodetect_UFunK_Pad(){
+	loop{
+		portlist := UFunK_List_COM_Ports()
+		; try all COM-Ports found
+		for index, element in portlist{
+			Handle := UFunK_COM_Init(element)
+			if Handle {
+				sleep, 50
+				answer := UFunK_COM_Issue_Command(Handle, "HELLO")
+				if InStr(answer, "UFunK-Pad READY")
+					return Handle
+				else
+					UFunK_COM_Close(Handle)
+			}
+		}
+		MsgBox, 37, UFunK-Pad Not Found, The UFunK-Pad could not be found. `n Try again or Cancel (and Exit the Program)?
+		IfMsgBox, Cancel
+			ExitApp
+	}
+}
+; UFunK_Autodetect_UFunK_Pad	- End
+
+; UFunK Button Commands	- Begin
+UFunK_Button_Text(Handle, Button, Text){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Text := SubStr(Text, 1 , 10)
+	Command := "F" . Button . "TL" . Text
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_Color(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "CF" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_TextColor(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "CL" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_BorderColor(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "CB" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_Pushed_Color(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "PF" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_Pushed_TextColor(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "PL" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_Pushed_BorderColor(Handle, Button, RGB888){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "F" . Button . "PB" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_Button_ReDraw(Handle, Button){
+	if ((Button < 13) || (Button > 24))
+		return 0
+	Command := "F" . Button . "DB"
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+; UFunK Button Commands	- End
+
+; UFunK InfoLine Commands	- Begin
+UFunK_InfoLine_Text(Handle, Line, Text){
+	if ((Line != 1) && (Line != 2))
+		return 0
+	Text := SubStr(Text, 1 , 17)
+	Command := "I" . Line . "TL" . Text
+	return UFunK_COM_Issue_Command(Handle, Command)
+}
+UFunK_InfoLine_Color(Handle, Line, RGB888){
+	if ((Line != 1) && (Line != 2))
+		return 0
+	Color := UFunK_RGB_888to565(RGB888)
+	Command := "I" . Line . "TC" . Color
+	return UFunK_COM_Issue_Command(Handle, Command)
+}	
+; UFunK InfoLine Commands	- End
+
+; ----------------------------
 ; UFunK_COM_Init 	- Begin
 UFunK_COM_Init(Port, HaltOnError := 0){
 	; Format the COM-Port: For COM Ports > 9 \\.\ needs to prepended to the COM Port name.	
@@ -241,29 +422,6 @@ UFunK_List_COM_Ports(){
 	return comports
 }
 ; UFunK_List_COM_Ports		- End
-
-; UFunK_Autodetect_UFunK_Pad	- Begin
-UFunK_Autodetect_UFunK_Pad(){
-	loop{
-		portlist := UFunK_List_COM_Ports()
-		; try all COM-Ports found
-		for index, element in portlist{
-			Handle := UFunK_COM_Init(element)
-			if Handle {
-				sleep, 50
-				answer := UFunK_COM_Issue_Command(Handle, "HELLO")
-				if InStr(answer, "UFunK-Pad READY")
-					return Handle
-				else
-					UFunK_COM_Close(Handle)
-			}
-		}
-		MsgBox, 37, UFunK-Pad Not Found, The UFunK-Pad could not be found. `n Try again or Cancel (and Exit the Program)?
-		IfMsgBox, Cancel
-			ExitApp
-	}
-}
-; UFunK_Autodetect_UFunK_Pad	- End
 
 ; UFunK_RGB_888to565		- Begin
 UFunK_RGB_888to565(rgb888){
